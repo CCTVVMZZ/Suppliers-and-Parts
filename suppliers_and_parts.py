@@ -65,17 +65,29 @@ def create_suppliers_and_parts(con):
     FOREIGN KEY(PNO) REFERENCES P(PNO)
     )""")
 
+    # Filling the tables
+    
     cur.executemany("INSERT INTO S VALUES (?, ?, ?, ?)", suppliers)
-
     cur.executemany("INSERT INTO P VALUES (?, ?, ?, ?, ?)", parts)
-
     cur.executemany("INSERT INTO SP VALUES (?, ?, ?)", shipments)
+    
 
 if __name__ == "__main__":
     import sys
     import os
-    if len(sys.argv) == 2 and not os.path.exists(sys.argv[1]):        
-        con = sqlite3.connect(sys.argv[1])
+    
+    if len(sys.argv) == 2:
+        name = sys.argv[1]
+    else:
+        name = "suppliers_and_parts.db"
+        
+    if not os.path.exists(name):
+        con = sqlite3.connect(name)
         create_suppliers_and_parts(con)
         con.commit()
         con.close()
+        print(f"The \"supplier and parts\" relational database was created in {name!r} using SQLite {sqlite3.sqlite_version}.")
+    else:
+        print(f"File {name!r} already exists.")
+
+        
